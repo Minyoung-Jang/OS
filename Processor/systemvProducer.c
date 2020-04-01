@@ -22,10 +22,10 @@ int main(){
     ptr = shmat(shm_fd, NULL, 0);
 
     sprintf(ptr, "%s", message_0);
-    printf("%s\n", ptr);
+    printf("%s\n",(char*)ptr);
     ptr += strlen(message_0);
     sprintf(ptr,"%s",message_1);
-    printf("%s\n", ptr);
+    printf("%s\n",(char*)ptr);
     ptr += strlen(message_1);
 
     return 0;

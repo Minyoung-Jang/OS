@@ -18,7 +18,7 @@ int main(){
     shm_fd = shmget(IPC_PRIVATE, SIZE, S_IRUSR | S_IWUSR);
     ptr = shmat(shm_fd, NULL, 0);
     
-    printf("%s\n", ptr);
+    printf("%s\n",(char*)ptr);
 
     shmdt(ptr);
     shmctl(shm_fd, IPC_RMID, NULL);
