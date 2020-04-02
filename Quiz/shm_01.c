@@ -25,6 +25,7 @@
 #include <sys/types.h>
 #include <sys/shm.h>
 #include <sys/stat.h>
+#include <sys/mman.h>
 
 // struct for message buffer
 typedef struct {
@@ -40,8 +41,8 @@ void child(int shm_id);			// function for the child
 int main(int argc, char argv[0])
 {
 	int shm_id = 0;
-
 	// hint: allocate shared memory block for the shared buffer
+	shm_id = shmget(IPC_PRIVATE, sizeof(Buffer), S_IRUSR | S_IWUSR);
 
 	pid_t child_pid = fork();
 
@@ -60,7 +61,8 @@ int main(int argc, char argv[0])
 
 void parent(int shm_id)
 {
-	Buffer *buffer = &global_buffer;		// hint: modify this line
+	int exitcode;
+	Buffer *buffer = shmat(shm_id, NULL, 0);		// hint: modify this line
 	buffer->filled = 0;
 
 	sleep(2);			// wait for the child to start
@@ -84,6 +86,7 @@ void parent(int shm_id)
 	}
 
 	// hint: put some code here
+	wait(&exitcode);
 	
 	printf("[parent] Terminating.\n");
 	fflush(stdout);
@@ -97,7 +100,7 @@ void child(int shm_id)
 	fflush(stdout);
 
 
-	Buffer *buffer = &global_buffer;		// hint: modify this line
+	Buffer *buffer = shmat(shm_id, NULL, 0);		// hint: modify this line
 
 	while(1){
 		while(!buffer->filled)
@@ -114,6 +117,8 @@ void child(int shm_id)
 	}
 
 	// hint: put some code here
+	shmdt(buffer);
+	shmctl(shm_id, IPC_RMID, NULL);
 
 	printf("[child] Terminating.\n");
 	fflush(stdout);
