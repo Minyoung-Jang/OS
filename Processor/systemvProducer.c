@@ -27,6 +27,6 @@ int main(){
     sprintf(ptr,"%s",message_1);
     printf("%s\n",(char*)ptr);
     ptr += strlen(message_1);
-
+    
     return 0;
 }
