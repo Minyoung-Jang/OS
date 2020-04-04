@@ -21,35 +21,38 @@ void *msg_sender(void *param){
 
     while(strcmp(temp, "quit") != 0){
         printf("[mesg] ");
-        scanf("%s", temp);
+        fgets(temp, SIZE, stdin);
+        temp[strlen(temp)-1] = '\0';
+        msg.type = 1;
         strcpy(msg.text, temp);
 
         if (strcmp(temp, "quit") == 0){
             repeat_receiver = 0;
             pthread_exit(0);
         }else{
-            int result = msgsnd(*(int*)param, &msg, sizeof(msg) - sizeof(long), 0);
+            int result = msgsnd(*(int*)param, &msg, sizeof(Message) - sizeof(long), 0);
             if(result == -1){
                 perror("Failed to send the message\n");
                 exit(1);
             }
         }
+        sleep(1);
     }
 }
 
 void *msg_receiver(void *param){
 
     while(repeat_receiver == 1){
-        int result = msgrcv(*(int*)param, &msg, (sizeof(msg) - sizeof(long)), 1, IPC_NOWAIT);
+        int result = msgrcv(*(int*)param, &msg, (sizeof(Message) - sizeof(long)), 1, IPC_NOWAIT);
         if(result == -1){
             perror("Failed to receive the message\n");
             exit(1);
         }else{
-            printf("                [incoming] \"%s\"\n[mesg]", msg.text);
+            printf("                [incoming] \"%s\"\n", msg.text);
         }
-        sleep(1);
+        sleep(3);
     }
-    
+    pthread_exit(0);
 }
 
 int main(int argc, char *argv[]){
