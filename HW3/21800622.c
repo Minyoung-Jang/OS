@@ -8,19 +8,19 @@
 
 #define SIZE 1024
 
-struct message{
-    int type;
+typedef struct{
+    long type;
     char text[SIZE];
-};
+}Message;
 
 int repeat_receiver = 1;
-struct message msg;
 char temp[SIZE] = "";
+Message msg;
 
 void *msg_sender(void *param){
 
     while(strcmp(temp, "quit") != 0){
-        printf("[mesg]  ");
+        printf("[mesg] ");
         scanf("%s", temp);
         strcpy(msg.text, temp);
 
@@ -28,9 +28,9 @@ void *msg_sender(void *param){
             repeat_receiver = 0;
             pthread_exit(0);
         }else{
-            int result = msgsnd((int)param, &msg, sizeof(msg) - sizeof(int), 0);
+            int result = msgsnd(*(int*)param, &msg, sizeof(msg) - sizeof(long), 0);
             if(result == -1){
-                perror("Failed to send the message");
+                perror("Failed to send the message\n");
                 exit(1);
             }
         }
@@ -40,13 +40,14 @@ void *msg_sender(void *param){
 void *msg_receiver(void *param){
 
     while(repeat_receiver == 1){
-        int result = msgrcv((int)param, &msg, (sizeof(msg) - sizeof(int)), 1, IPC_NOWAIT);
+        int result = msgrcv(*(int*)param, &msg, (sizeof(msg) - sizeof(long)), 1, IPC_NOWAIT);
         if(result == -1){
-            perror("Failed to receive the message");
+            perror("Failed to receive the message\n");
             exit(1);
         }else{
-            printf("                [incoming] \"%s\"", msg.text);
+            printf("                [incoming] \"%s\"\n[mesg]", msg.text);
         }
+        sleep(1);
     }
     
 }
