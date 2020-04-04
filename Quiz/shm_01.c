@@ -25,8 +25,7 @@
 #include <sys/types.h>
 #include <sys/shm.h>
 #include <sys/stat.h>
-#include <sys/mman.h>
-
+#include <sys/wait.h>
 // struct for message buffer
 typedef struct {
 	char message[512];			// message buffer
@@ -38,7 +37,7 @@ Buffer global_buffer;
 void parent(int shm_id);		// function for the parent
 void child(int shm_id);			// function for the child
 
-int main(int argc, char argv[0])
+int main()
 {
 	int shm_id = 0;
 	// hint: allocate shared memory block for the shared buffer
