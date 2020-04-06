@@ -67,6 +67,7 @@ int main(int argc, char *argv[]){
 
 void *msg_sender(void *param){
     while(strcmp(string_buffer, "quit") != 0){
+        fflush(stdout);
         printf("[msg] ");
         fgets(string_buffer, SIZE , stdin);
 
@@ -87,17 +88,20 @@ void *msg_sender(void *param){
             perror("Failed to send the message\n");
             exit(1);
         }
-    }        
+    }     
+    fflush(stdout);   
     return NULL;
 }
 
 void *msg_receiver(void *param){
+    fflush(stdout);
     while(repeat_receiver == 1){
         int result = msgrcv(*(int*)param, &message, sizeof(Message) - sizeof(long), TYPE, IPC_NOWAIT);
         if(result != -1){
-            printf("\t\t\t[incoming] \"%s\"", message.msg);
+            printf("\t\t\t[incoming] \"%s\"\n[msg] ", message.msg);
         }
-        printf("\n[msg] ");
+        fflush(stdout);
     }
+    fflush(stdout);
     pthread_exit(0);
 }
