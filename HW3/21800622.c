@@ -95,8 +95,7 @@ void *msg_receiver(void *param){
     while(repeat_receiver == 1){
         int result = msgrcv(*(int*)param, &message, sizeof(Message) - sizeof(long), TYPE, IPC_NOWAIT);
         if(result != -1){
-            message.msg[strlen(message.msg)-1] = "\n";
-            printf("\t\t\t[incoming] \"%s\"[msg] ", message.msg);
+            printf("\t\t\t[incoming] \"%s\"", message.msg);
         }   
     }
     pthread_exit(0);
