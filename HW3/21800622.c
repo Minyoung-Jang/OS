@@ -7,6 +7,7 @@
 #include <sys/ipc.h>
 
 #define SIZE 1024
+#define TYPE 1
 
 typedef struct{
     long type;
@@ -76,7 +77,7 @@ void *msg_sender(void *param){
         string_buffer[strlen(string_buffer)-1] = '\0';
         strcpy(message.msg, string_buffer);
         printf("buffer : %s\nsent message : %s\n", string_buffer, message.msg);
-        message.type = 1;
+        message.type = TYPE;
 
         if (strcmp(string_buffer, "quit") == 0){
             repeat_receiver = 0;
@@ -95,8 +96,8 @@ void *msg_sender(void *param){
 }
 
 void *msg_receiver(void *param){
-    while(repeat_receiver == 1 && strlen(string_buffer) > 1){
-        int result = msgrcv(*(int*)param, &message, sizeof(Message) - sizeof(long), 1, IPC_NOWAIT);
+    while(repeat_receiver == 1){
+        int result = msgrcv(*(int*)param, &message, sizeof(Message) - sizeof(long), TYPE, IPC_NOWAIT);
         if(result != -1){
             perror("Failed to receive the message\n");
             exit(1);
