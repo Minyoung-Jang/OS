@@ -40,13 +40,13 @@ int main(int argc, char *argv[]){
         exit(0);
     }
 
-    printf("snd_key : %d , rcv_key : %d\n", atoi(argv[1]), atoi(argv[2]));
+    // printf("snd_key : %d , rcv_key : %d\n", atoi(argv[1]), atoi(argv[2]));
 
     // Create Message Queue ID
     send_queue = msgget((key_t)atoi(argv[1]), IPC_CREAT | 0666);
     receive_queue = msgget((key_t)atoi(argv[2]), IPC_CREAT | 0666);
 
-    printf("send queue : %d, rcv queue: %d\n", send_queue, receive_queue);
+    // printf("send queue : %d, rcv queue: %d\n", send_queue, receive_queue);
 
     // Get the Default Attributes
     pthread_attr_init(&send_attr);
@@ -60,12 +60,9 @@ int main(int argc, char *argv[]){
     pthread_join(send_tid, NULL);
     pthread_join(receive_tid, NULL);
 
-    printf("Join\n");
     // Deallocate the Queues
     msgctl(send_queue, IPC_RMID, 0);
     msgctl(receive_queue, IPC_RMID, 0);
-
-    printf("Deallocate\n");
 
     return 0;
 }
@@ -74,9 +71,13 @@ void *msg_sender(void *param){
     while(strcmp(string_buffer, "quit") != 0){
         printf("[msg] ");
         fgets(string_buffer, SIZE , stdin);
+
+        if (strcmp(string_buffer, "\n") == 0)
+            continue;
+
         string_buffer[strlen(string_buffer)-1] = '\0';
         strcpy(message.msg, string_buffer);
-        printf("buffer : %s\nsent message : %s\n", string_buffer, message.msg);
+        // printf("buffer : %s\nsent message : %s\n", string_buffer, message.msg);
         message.type = TYPE;
 
         if (strcmp(string_buffer, "quit") == 0){
@@ -90,19 +91,17 @@ void *msg_sender(void *param){
             perror("Failed to send the message\n");
             exit(1);
         }
-        
     }
     return NULL;
 }
 
 void *msg_receiver(void *param){
     while(repeat_receiver == 1){
-        
         int result = msgrcv(*(int*)param, &message, sizeof(Message) - sizeof(long), TYPE, IPC_NOWAIT);
         if(result != -1){
-            printf("                    [incoming] \"%s\"\n", message.msg);
+            printf("                    [incoming] \"%s\"\n[msg]", message.msg);
         }
         sleep(1);
     }
-    return NULL;
+    pthread_exit(0);
 }
