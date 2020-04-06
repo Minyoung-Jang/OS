@@ -99,8 +99,8 @@ void *msg_receiver(void *param){
         int result = msgrcv(*(int*)param, &message, sizeof(Message) - sizeof(long), TYPE, IPC_NOWAIT);
         if(result != -1){
             printf("\t\t\t[incoming] \"%s\"\n[msg]", message.msg);
-        }
-        fflush(stdout);
+        }   
     }
+    fflush(stdout);
     pthread_exit(0);
 }
