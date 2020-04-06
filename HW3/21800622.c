@@ -2,6 +2,7 @@
 #include <pthread.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/types.h>
 #include <unistd.h>
 #include <sys/msg.h>
 #include <sys/ipc.h>
@@ -15,7 +16,7 @@ typedef struct{
 } Message;
 
 int repeat_receiver = 1;
-char string_buffer[SIZE] = "";
+char string_buffer[SIZE];
 Message message;
 
 void *msg_sender(void *param);
@@ -72,20 +73,20 @@ void *msg_sender(void *param){
         printf("[msg] ");
         fgets(string_buffer, SIZE , stdin);
 
-        if (strcmp(string_buffer, "\n") == 0)
-            continue;
+        // if (strcmp(string_buffer, "\n") == 0)
+        //     continue;
 
         string_buffer[strlen(string_buffer)-1] = '\0';
+        message.type = TYPE;
         strcpy(message.msg, string_buffer);
         // printf("buffer : %s\nsent message : %s\n", string_buffer, message.msg);
-        message.type = TYPE;
 
         if (strcmp(string_buffer, "quit") == 0){
             repeat_receiver = 0;
             pthread_exit(0);
         }
 
-        int result = msgsnd(*(int*)param, &message.msg, sizeof(Message)-sizeof(long), 0);
+        int result = msgsnd(*(int*)param, &message, sizeof(Message)-sizeof(long), 0);
 
         if(result == -1){
             perror("Failed to send the message\n");
