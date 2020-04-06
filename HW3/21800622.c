@@ -18,6 +18,7 @@ typedef struct{
 int repeat_receiver = 1;
 char string_buffer[SIZE];
 Message message;
+int flag = 0;
 
 void *msg_sender(void *param);
 void *msg_receiver(void *param);
@@ -69,8 +70,8 @@ int main(int argc, char *argv[]){
 }
 
 void *msg_sender(void *param){
-    printf("[msg] ");
     while(strcmp(string_buffer, "quit") != 0){
+        printf("[msg] ");
         fgets(string_buffer, SIZE , stdin);
 
         string_buffer[strlen(string_buffer)-1] = '\0';
@@ -97,7 +98,6 @@ void *msg_receiver(void *param){
         int result = msgrcv(*(int*)param, &message, sizeof(Message) - sizeof(long), TYPE, IPC_NOWAIT);
         if(result != -1){
             printf("\t\t\t[incoming] \"%s\"", message.msg);
-            printf("\n[msg] ");
         }
     }
     pthread_exit(0);
