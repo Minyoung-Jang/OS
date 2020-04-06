@@ -99,9 +99,6 @@ void *msg_receiver(void *param){
     while(repeat_receiver == 1){
         int result = msgrcv(*(int*)param, &message, sizeof(Message) - sizeof(long), TYPE, IPC_NOWAIT);
         if(result != -1){
-            perror("Failed to receive the message\n");
-            exit(1);
-        }else{
             printf("                    [incoming] \"%s\"\n", message.msg);
         }
         sleep(1);
