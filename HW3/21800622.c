@@ -67,7 +67,12 @@ int main(int argc, char *argv[]){
 
 void *msg_sender(void *param){
     while(strcmp(string_buffer, "quit") != 0){
-        printf("[msg] ");
+        if(flag == 0){
+            printf("[msg] ");
+        }else{
+            printf("\n[msg] ");
+        }
+        
         fgets(string_buffer, SIZE , stdin);
 
         if (strcmp(string_buffer, "\n") == 0) continue;
@@ -95,7 +100,8 @@ void *msg_receiver(void *param){
     while(repeat_receiver == 1){
         int result = msgrcv(*(int*)param, &message, sizeof(Message) - sizeof(long), TYPE, IPC_NOWAIT);
         if(result != -1){
-            printf("\t\t\t[incoming] \"%s\"", message.msg);
+            printf("\t\t\t[incoming] \"%s\"\n", message.msg);
+            flag = 1;
         }   
     }
     pthread_exit(0);
