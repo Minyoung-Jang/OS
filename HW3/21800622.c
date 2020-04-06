@@ -97,6 +97,7 @@ void *msg_sender(void *param){
 
 void *msg_receiver(void *param){
     while(repeat_receiver == 1){
+        
         int result = msgrcv(*(int*)param, &message, sizeof(Message) - sizeof(long), TYPE, IPC_NOWAIT);
         if(result != -1){
             printf("                    [incoming] \"%s\"\n", message.msg);
