@@ -73,13 +73,12 @@ void *msg_sender(void *param){
         printf("[msg] ");
         fgets(string_buffer, SIZE , stdin);
 
-        // if (strcmp(string_buffer, "\n") == 0)
-        //     continue;
+        if (strcmp(string_buffer, "\n") == 0)
+            continue;
 
         string_buffer[strlen(string_buffer)-1] = '\0';
         message.type = TYPE;
         strcpy(message.msg, string_buffer);
-        // printf("buffer : %s\nsent message : %s\n", string_buffer, message.msg);
 
         if (strcmp(string_buffer, "quit") == 0){
             repeat_receiver = 0;
@@ -100,9 +99,8 @@ void *msg_receiver(void *param){
     while(repeat_receiver == 1){
         int result = msgrcv(*(int*)param, &message, sizeof(Message) - sizeof(long), TYPE, IPC_NOWAIT);
         if(result != -1){
-            printf("                    [incoming] \"%s\"\n[msg]", message.msg);
+            printf("                    [incoming] \"%s\"\n[mesg]", message.msg);
         }
-        sleep(1);
     }
     pthread_exit(0);
 }
