@@ -4,58 +4,28 @@
 #include <string.h>
 #include <unistd.h>
 #include <sys/msg.h>
-#include <sys/wait.h>
+#include <sys/ipc.h>
 
 #define SIZE 1024
 
+typedef struct{
+    long type;
+    char msg[SIZE];
+} Message;
+
 int repeat_receiver = 1;
-char temp[SIZE] = "";
-char msg[SIZE];
+char string_buffer[SIZE] = "";
+Message message;
 
-void *msg_sender(void *param){
-    repeat_receiver = 0;
-    while(strcmp(temp, "quit") != 0){
-        printf("[mesg] ");
-        fgets(temp, SIZE, stdin);
-        temp[strlen(temp)-1] = '\0';
-        strcpy(msg, temp);
-
-        if (strcmp(temp, "quit") == 0){
-            repeat_receiver = 0;
-            pthread_exit(0);
-        }else{
-            int result = msgsnd(*(int*)param, &msg, sizeof(msg), 0);
-            repeat_receiver = 1;
-            if(result == -1){
-                perror("Failed to send the message\n");
-                exit(1);
-            }
-        }
-    }
-    return NULL;
-}
-
-void *msg_receiver(void *param){
-    while(repeat_receiver == 1){
-        int result = msgrcv(*(int*)param, &msg, sizeof(msg), 1, IPC_NOWAIT);
-        if(result != -1){
-            perror("Failed to receive the message\n");
-            exit(1);
-        }else{
-            printf("                [incoming] \"%s\"\n[mesg]", msg);
-        }
-        sleep(1);
-    }
-    pthread_exit(0);
-}
+void *msg_sender(void *param);
+void *msg_receiver(void *param);
 
 int main(int argc, char *argv[]){
-
-    int send_qid = 0, receive_qid = 0;
+    int send_queue = 0, receive_queue = 0;
     pthread_t send_tid, receive_tid;
     pthread_attr_t send_attr, receive_attr;
 
-    if(argc < 3){
+    if(argc != 3){
         fprintf(stderr, "usage: ./hw3 <snd_key> <rcv_key>\n");
         exit(0);
     }
@@ -69,25 +39,71 @@ int main(int argc, char *argv[]){
         exit(0);
     }
 
+    printf("snd_key : %d , rcv_key : %d\n", atoi(argv[1]), atoi(argv[2]));
+
     // Create Message Queue ID
-    send_qid = msgget(atoi(argv[1]), IPC_CREAT | 0666);
-    receive_qid = msgget(atoi(argv[2]), IPC_CREAT | 0666);
+    send_queue = msgget((key_t)atoi(argv[1]), IPC_CREAT | 0666);
+    receive_queue = msgget((key_t)atoi(argv[2]), IPC_CREAT | 0666);
+
+    printf("send queue : %d, rcv queue: %d\n", send_queue, receive_queue);
 
     // Get the Default Attributes
     pthread_attr_init(&send_attr);
     pthread_attr_init(&receive_attr);
 
     // Create Message Threads
-    pthread_create(&send_tid, &send_attr, msg_sender, &send_qid);
-    pthread_create(&receive_tid, &receive_attr, msg_receiver, &receive_qid);
+    pthread_create(&send_tid, &send_attr, msg_sender, &send_queue);
+    pthread_create(&receive_tid, &receive_attr, msg_receiver, &receive_queue);
 
     // Wait for the Threads
     pthread_join(send_tid, NULL);
     pthread_join(receive_tid, NULL);
 
+    printf("Join\n");
     // Deallocate the Queues
-    msgctl(send_qid, IPC_RMID, 0);
-    msgctl(receive_qid, IPC_RMID, 0);
+    msgctl(send_queue, IPC_RMID, 0);
+    msgctl(receive_queue, IPC_RMID, 0);
+
+    printf("Deallocate\n");
 
     return 0;
+}
+
+void *msg_sender(void *param){
+    while(strcmp(string_buffer, "quit") != 0){
+        printf("[msg] ");
+        fgets(string_buffer, SIZE , stdin);
+        string_buffer[strlen(string_buffer)-1] = '\0';
+        strcpy(message.msg, string_buffer);
+        printf("buffer : %s\nsent message : %s\n", string_buffer, message.msg);
+        message.type = 1;
+
+        if (strcmp(string_buffer, "quit") == 0){
+            repeat_receiver = 0;
+            pthread_exit(0);
+        }
+
+        int result = msgsnd(*(int*)param, &message.msg, sizeof(Message)-sizeof(long), 0);
+
+        if(result == -1){
+            perror("Failed to send the message\n");
+            exit(1);
+        }
+        
+    }
+    return NULL;
+}
+
+void *msg_receiver(void *param){
+    while(repeat_receiver == 1 && strlen(string_buffer) > 1){
+        int result = msgrcv(*(int*)param, &message, sizeof(Message) - sizeof(long), 1, IPC_NOWAIT);
+        if(result != -1){
+            perror("Failed to receive the message\n");
+            exit(1);
+        }else{
+            printf("                    [incoming] \"%s\"\n", message.msg);
+        }
+        sleep(1);
+    }
+    return NULL;
 }
