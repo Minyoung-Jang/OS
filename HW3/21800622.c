@@ -42,13 +42,9 @@ int main(int argc, char *argv[]){
         exit(0);
     }
 
-    // printf("snd_key : %d , rcv_key : %d\n", atoi(argv[1]), atoi(argv[2]));
-
     // Create Message Queue ID
     send_queue = msgget((key_t)atoi(argv[1]), IPC_CREAT | 0666);
     receive_queue = msgget((key_t)atoi(argv[2]), IPC_CREAT | 0666);
-
-    // printf("send queue : %d, rcv queue: %d\n", send_queue, receive_queue);
 
     // Get the Default Attributes
     pthread_attr_init(&send_attr);
@@ -71,8 +67,11 @@ int main(int argc, char *argv[]){
 
 void *msg_sender(void *param){
     while(strcmp(string_buffer, "quit") != 0){
+        fflush(stdout);
         printf("[msg] ");
         fgets(string_buffer, SIZE , stdin);
+
+        if (strcmp(string_buffer, "\n") == 0) continue;
 
         string_buffer[strlen(string_buffer)-1] = '\0';
         message.type = TYPE;
@@ -89,18 +88,19 @@ void *msg_sender(void *param){
             perror("Failed to send the message\n");
             exit(1);
         }
+        fflush(stdout);
     }
     return NULL;
 }
 
 void *msg_receiver(void *param){
+    fflush(stdout);
     while(repeat_receiver == 1){
         int result = msgrcv(*(int*)param, &message, sizeof(Message) - sizeof(long), TYPE, IPC_NOWAIT);
         if(result != -1){
-            printf("\t\t\t[incoming] \"%s\"", message.msg);
-            printf("\n[msg] ");
-            sleep(1);
+            printf("\t\t\t[incoming] \"%s\"\n[msg]", message.msg);
         }
+        fflush(stdout);
     }
     pthread_exit(0);
 }
