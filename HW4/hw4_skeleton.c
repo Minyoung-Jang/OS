@@ -47,11 +47,11 @@ int main(int argc, char *argv[])
 	printf("screen size = %d x %d\n", width, height);
 	printf("Press ESC to quit!\n");
 
-// //	initialize location and velocity of ball
-// 	int x = rand() % width + 1;
-// 	int y = rand() % height + 1;
-// 	int dx = rand() % 7 - 3;		// dx in [-3, +3]
-// 	int dy = rand() % 5 - 2;		// dy in [-2, +2]
+//	initialize location and velocity of ball
+	int x = rand() % width + 1;
+	int y = rand() % height + 1;
+	int dx = rand() % 7 - 3;		// dx in [-3, +3]
+	int dy = rand() % 5 - 2;		// dy in [-2, +2]
 
 // TO DO: modify the above code to represent multiple balls
 //	1. Declare an array of ThreadParam whose length is no_thread.
@@ -67,11 +67,8 @@ int main(int argc, char *argv[])
 
 //	2. Launch threads using MoveBall() function passing &param[t]
 	pthread_t ball_id[no_thread];
-	pthread_attr_t ball_attr;
-	pthread_attr_init(&ball_attr);
-
 	for(int i = 0; i < no_thread; i++){
-		t = pthread_create(&ball_id[i], &ball_attr, &MoveBall, &param[i]);
+		t = pthread_create(&ball_id[i], NULL, &MoveBall, &param[i]);
 		if(t){
 			printf("Create Error.\n");
 			exit(1);
@@ -84,7 +81,7 @@ int main(int argc, char *argv[])
 //		while(getch() != 27)
 //			MySleep(1000);
 //	4. Terminate the child threads by setting repeat to FALSE (0)
-	repeat = FALSE;
+	//repeat = FALSE;
 //  5. Wait for the child threads to terminate (call pthread_join())
 	
 	for(int i = 0; i < no_thread; i++){
