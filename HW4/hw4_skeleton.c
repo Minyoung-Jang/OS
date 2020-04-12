@@ -71,9 +71,8 @@ int main(int argc, char *argv[])
 	pthread_attr_init(&ball_attr);
 
 	for(int i = 0; i < no_thread; i++){
-		pthread_create(&ball_id[i], &ball_attr, MoveBall, &param[t]);
+		pthread_create(&ball_id[i], &ball_attr, MoveBall, &param[i]);
 	}
-
 
 	while(getch() != 27)
 		MySleep(1000);
@@ -85,7 +84,7 @@ int main(int argc, char *argv[])
 //  5. Wait for the child threads to terminate (call pthread_join())
 	
 	for(int i = 0; i < no_thread; i++){
-		pthread_join(ball_id, NULL);
+		pthread_join(ball_id[i], NULL);
 	}
 
 	clrscr();
