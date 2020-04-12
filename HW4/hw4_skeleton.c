@@ -67,9 +67,11 @@ int main(int argc, char *argv[])
 
 //	2. Launch threads using MoveBall() function passing &param[t]
 	pthread_t ball_id;
-    pthread_attr_t ball_attr;
+	pthread_attr_t ball_attr;
 	pthread_attr_init(&ball_attr);
-	pthread_create(&ball_id, &ball_attr, MoveBall, &param[t]);
+	for(int i = 0; i < no_thread; i++){
+		pthread_create(&ball_id, &ball_attr, MoveBall, &param[i]);
+	}
 
 	while(getch() != 27)
 		MySleep(1000);
