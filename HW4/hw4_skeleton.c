@@ -71,7 +71,7 @@ int main(int argc, char *argv[])
 	pthread_attr_init(&ball_attr);
 
 	for(int i = 0; i < no_thread; i++){
-		pthread_create(&ball_id[i], &ball_attr, MoveBall, &param[i]);
+		pthread_create(&ball_id[i], &ball_attr, MoveBall, &param[t]);
 	}
 
 
