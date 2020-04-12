@@ -70,8 +70,8 @@ int main(int argc, char *argv[])
 	pthread_attr_t ball_attr1, ball_attr2;
 	pthread_attr_init(&ball_attr1);
 	pthread_attr_init(&ball_attr2);
-	pthread_create(&ball_id1, &ball_attr1, MoveBall, &param[no_thread]);
-	pthread_create(&ball_id2, &ball_attr2, MoveBall, &param[no_thread]);
+	pthread_create(&ball_id1, &ball_attr1, MoveBall, &param[t]);
+	pthread_create(&ball_id2, &ball_attr2, MoveBall, &param[t]);
 
 	while(getch() != 27)
 		MySleep(1000);
