@@ -58,7 +58,9 @@ int main(int argc, char *argv[])
 //		ex) ThreadParam param[no_thread];
 //  2. Initialize each of param[t] by calling InitParam()
 	ThreadParam param[no_thread];
-	InitParam(param, width, height);
+	for(int i = 0; i < no_thread; i++){
+		InitParam(param, width, height);
+	}
 // TO DO: extend the above animation code to animate multiple balls using threads 
 
 //	1. Move the above while-loop to the 'void* MoveBall(void *vparam);' below.
@@ -68,13 +70,14 @@ int main(int argc, char *argv[])
     pthread_attr_t ball_attr;
 	pthread_attr_init(&ball_attr);
 	pthread_create(&ball_id, &ball_attr, MoveBall, &param[t]);
-	pthread_create(&ball_id, &ball_attr, MoveBall, &param[t]);
+
 	while(getch() != 27)
 		MySleep(1000);
 //	3. Wait for ESC key
 //		while(getch() != 27)
 //			MySleep(1000);
 //	4. Terminate the child threads by setting repeat to FALSE (0)
+	repeat = FALSE;
 //  5. Wait for the child threads to terminate (call pthread_join())
 	pthread_join(ball_id, NULL);
 
