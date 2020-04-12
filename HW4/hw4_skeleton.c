@@ -66,13 +66,12 @@ int main(int argc, char *argv[])
 //	1. Move the above while-loop to the 'void* MoveBall(void *vparam);' below.
 
 //	2. Launch threads using MoveBall() function passing &param[t]
-	pthread_t ball_id;
-	pthread_attr_t ball_attr;
-	
-	for(int i = 0; i < no_thread; i++){
-		pthread_attr_init(&ball_attr);
-		pthread_create(&ball_id, &ball_attr, MoveBall, &param[i]);
-	}
+	pthread_t ball_id1, ball_id2;
+	pthread_attr_t ball_attr1, ball_attr2;
+	pthread_attr_init(&ball_attr1);
+	pthread_attr_init(&ball_attr2);
+	pthread_create(&ball_id1, &ball_attr1, MoveBall, &param[no_thread]);
+	pthread_create(&ball_id2, &ball_attr2, MoveBall, &param[no_thread]);
 
 	while(getch() != 27)
 		MySleep(1000);
@@ -82,9 +81,8 @@ int main(int argc, char *argv[])
 //	4. Terminate the child threads by setting repeat to FALSE (0)
 	repeat = FALSE;
 //  5. Wait for the child threads to terminate (call pthread_join())
-	for(int i =  0; i < no_thread; i++){
-		pthread_join(ball_id, NULL);
-	}
+	pthread_join(ball_id1, NULL);
+	pthread_join(ball_id2, NULL);
 
 	clrscr();
 	gotoxy(1, 1);
