@@ -102,6 +102,5 @@ void *msg_receiver(void *param){
         }
         fflush(stdout);
     }
-    fflush(stdout);
     pthread_exit(0);
 }
