@@ -66,12 +66,12 @@ int main(int argc, char *argv[])
 //	1. Move the above while-loop to the 'void* MoveBall(void *vparam);' below.
 
 //	2. Launch threads using MoveBall() function passing &param[t]
-	pthread_t ball_id[no_thread];
-	pthread_attr_t ball_attr[no_thread];
+	pthread_t ball_id;
+	pthread_attr_t ball_attr;
 	
 	for(int i = 0; i < no_thread; i++){
-		pthread_attr_init(&ball_attr[i]);
-		pthread_create(ball_id[i], &ball_attr[i], MoveBall, &param[i]);
+		pthread_attr_init(&ball_attr);
+		pthread_create(&ball_id, &ball_attr, MoveBall, &param[i]);
 	}
 
 	while(getch() != 27)
