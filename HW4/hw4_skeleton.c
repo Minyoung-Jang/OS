@@ -68,13 +68,13 @@ int main(int argc, char *argv[])
     pthread_attr_t ball_attr;
 	pthread_attr_init(&ball_attr);
 	pthread_create(&ball_id, &ball_attr, MoveBall, &param[t]);
+	pthread_create(&ball_id, &ball_attr, MoveBall, &param[t]);
 	while(getch() != 27)
 		MySleep(1000);
 //	3. Wait for ESC key
 //		while(getch() != 27)
 //			MySleep(1000);
 //	4. Terminate the child threads by setting repeat to FALSE (0)
-	repeat = 0;
 //  5. Wait for the child threads to terminate (call pthread_join())
 	pthread_join(ball_id, NULL);
 
