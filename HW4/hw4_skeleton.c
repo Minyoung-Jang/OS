@@ -67,6 +67,10 @@ int main(int argc, char *argv[])
 
 //	2. Launch threads using MoveBall() function passing &param[t]
 	pthread_t ball_id[no_thread];
+	pthread_attr_t ball_attr[no_thread];
+	for(int i = 0; i < no_thread; i++){
+		pthread_attr_init(&ball_attr[i]);
+	}
 	for(int i = 0; i < no_thread; i++){
 		t = pthread_create(&ball_id[i], NULL, &MoveBall, &param[i]);
 		if(t){
@@ -81,7 +85,7 @@ int main(int argc, char *argv[])
 //		while(getch() != 27)
 //			MySleep(1000);
 //	4. Terminate the child threads by setting repeat to FALSE (0)
-	//repeat = FALSE;
+	repeat = FALSE;
 //  5. Wait for the child threads to terminate (call pthread_join())
 	
 	for(int i = 0; i < no_thread; i++){
