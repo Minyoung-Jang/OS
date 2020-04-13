@@ -68,11 +68,13 @@ int main(int argc, char *argv[])
 //	2. Launch threads using MoveBall() function passing &param[t]
 	pthread_t ball_id[no_thread];
 	pthread_attr_t ball_attr[no_thread];
+
 	for(int i = 0; i < no_thread; i++){
 		pthread_attr_init(&ball_attr[i]);
 	}
+
 	for(int i = 0; i < no_thread; i++){
-		t = pthread_create(&ball_id[i], NULL, &MoveBall, &param[i]);
+		t = pthread_create(&ball_id[i], &ball_attr[i], &MoveBall, &param[i]);
 		if(t){
 			printf("Create Error.\n");
 			exit(1);
