@@ -59,7 +59,7 @@ int main(int argc, char *argv[])
 //  2. Initialize each of param[t] by calling InitParam()
 	ThreadParam param[no_thread];
 	for(int i = 0; i < no_thread; i++){
-		InitParam(param, width, height);
+		InitParam(&param[i], width, height);
 	}
 // TO DO: extend the above animation code to animate multiple balls using threads 
 
