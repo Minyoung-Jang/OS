@@ -18,7 +18,6 @@ typedef struct{
 int repeat_receiver = 1;
 char string_buffer[SIZE];
 Message message;
-int flag = 0;
 
 void *msg_sender(void *param);
 void *msg_receiver(void *param);
