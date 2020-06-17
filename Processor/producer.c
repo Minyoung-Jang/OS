@@ -1,4 +1,3 @@
-  
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -65,9 +64,10 @@ int main(){
         
         ptr->flag[0]=true;
         ptr->turn=1;
-        while(ptr->flag[1] && ptr-> turn==1 );
+        while(ptr->flag[1] && ptr->turn==1);
         strcpy(ptr->item[ptr->in],chat);
         if(strcmp(chat,"exit")==0){
+            ptr->flag[0]=false;
             munmap(ptr,sizeof(entire));
             break;
         }
@@ -80,9 +80,8 @@ int main(){
 
 
     }while(1);
-
     
-    shm_unlink(name);
+    // shm_unlink(name);
 
     return 0;
 }

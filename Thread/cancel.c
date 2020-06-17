@@ -166,8 +166,8 @@ void VectorAdd_MT(Vector *vec1, Vector *vec2, Vector *res, int no_thread)
 	// for (t = 0; t < no_thread; t++)
 	// {
 	// 	pthread_attr_init(&attr[t]);
-		//pthread_attr_setscope(&attr[t], PTHREAD_SCOPE_PROCESS);
-		//pthread_attr_setscope(&attr[t],PTHREAD_SCOPE_SYSTEM);
+		//pthread_attr_setscope(&attr[t], PTHREAD_SCOPE_PROCESS); user thread
+		//pthread_attr_setscope(&attr[t],PTHREAD_SCOPE_SYSTEM); kernel thread
 		//pthread_attr_setschedpolicy(&attr[t], SCHED_FIFO);
 		//pthread_attr_setschedpolicy(&attr[t],SCHED_RR);
 

@@ -86,6 +86,7 @@ void parent(int shm_id)
 
 	// hint: put some code here
 	wait(&exitcode);
+	shmdt(buffer);
 	
 	printf("[parent] Terminating.\n");
 	fflush(stdout);
