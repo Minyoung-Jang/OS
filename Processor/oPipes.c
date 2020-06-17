@@ -8,10 +8,16 @@
 #define WRITE_END 1
 
 int main(){
-    char write_msg[BUFFER_SIZE] = "Greetings";
+    char write_msg[BUFFER_SIZE];
+    char message[20];
     char read_msg[BUFFER_SIZE];
     int fd[2];
     pid_t pid;
+
+    printf("Write a short message: ");
+    fgets(message, sizeof(message), stdin);
+    message[strlen(message)-1]='\0';
+    strcpy(write_msg, message);
 
     if(pipe(fd) == -1){
         fprintf(stderr, "Pipe failed");
@@ -27,17 +33,17 @@ int main(){
 
     if(pid > 0){
         close(fd[READ_END]);
-
         write(fd[WRITE_END], write_msg, strlen(write_msg)+1);
         close(fd[WRITE_END]);
     }
     else{
         close(fd[WRITE_END]);
-        
         read(fd[READ_END], read_msg, BUFFER_SIZE);
         printf("read %s\n", read_msg);
         close(fd[READ_END]);
     }
+
+    fflush(stdout);
 
     return 0;
 }
